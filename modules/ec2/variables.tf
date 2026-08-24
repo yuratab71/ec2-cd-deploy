@@ -9,14 +9,6 @@ variable "should_create_elastic_ip" {
   default = false
 }
 
-variable "env_path" {
-  type = string
-}
-
-variable "docker_compose_path" {
-  type = string
-}
-
 variable "ssh_allowed_ips" {
   type    = list(string)
   default = ["0.0.0.0/0"]

@@ -36,8 +36,6 @@ module "ec2" {
   source = "./modules/ec2"
 
   ec2_type                 = "t2.micro"
-  env_path                 = "./ghostfolio/.env"
-  docker_compose_path      = "./ghostfolio/docker"
   ssh_allowed_ips          = var.ssh_allowed_ips
   ssh_public_key_path      = var.ssh_public_key_path
   ssh_private_key_path     = var.ssh_private_key_path
