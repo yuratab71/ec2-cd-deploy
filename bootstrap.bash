@@ -44,17 +44,11 @@ mkdir -p /etc/nginx
 touch /etc/nginx/nginx.conf
 
 cat <<EOF >/etc/nginx/nginx.conf
-user  nginx;
 worker_processes  auto;
-
-error_log  /var/log/nginx/error.log notice;
-pid        /run/nginx.pid;
-
 
 events {
 	worker_connections  1024;
 }
-
 
 http {
 	server {
@@ -74,4 +68,12 @@ sudo apt install nginx -y
 sudo ufw allow 'Nginx HTTP'
 sudo ufw allow 'Nginx HTTPS'
 
+sudo service nginx restart
+sudo nginx -s reload -t
+sudo nginx -s reload
+
 #After that, certbot needs to be configured via ssh
+
+#sudo snap install --classic certbot
+#sudo ln -s /snap/bin/certbot /usr/local/bin/certbot
+#sudo certbot --nginx
