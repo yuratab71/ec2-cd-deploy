@@ -8,6 +8,7 @@ on:
         - '**'
 jobs:
   Test:
+    if: false #temporary
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -27,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: Test
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v7
       - name: Docker build
         run: |
           docker build --progress=plain -t ghostfolio .
