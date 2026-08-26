@@ -1,0 +1,7 @@
+name: Test
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Test
+        run: echo "Test"
