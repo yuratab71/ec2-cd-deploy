@@ -41,7 +41,7 @@ jobs:
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: us-east-1
           local-image: ghostfolio
-          image: yuratabghostfolio:latest
+          image: ghostfolio:latest
 
 
 
