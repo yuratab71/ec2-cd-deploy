@@ -24,7 +24,7 @@ jobs:
       - name: Docker build
         run: |
           docker build --progress=plain -t ghostfolio .
-      - name: Setup AWS
+      - name: Setup AWS creds
         id: ecr
         uses: jwalton/gh-ecr-push@v2
         with:
