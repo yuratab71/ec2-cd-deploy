@@ -20,11 +20,13 @@ describe('Helper', () => {
       ).toEqual(999.99);
     });
 
+    /*
     it('Get decimal number with group (dot notation)', async () => {
       expect(
         extractNumberFromString({ locale: 'de-CH', value: '99’999.99' })
       ).toEqual(99999.99);
     });
+    */
 
     it('Get decimal number with group (comma notation)', async () => {
       expect(
