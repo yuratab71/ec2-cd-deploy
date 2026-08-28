@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# EXAMPLE BOOTSTRAP SCRIPT, RUNS ON INSTANCE CREATION
+#INSTALL ALL NECESSARY SOFTWARE TO EC2 INSTANCE
+
 set -e
 
-# Just example bootstrap script
+cd ~
 
+# INSTALL DOCKER
 sudo apt-get update -y
 sudo apt-get install docker.io -y
 sudo apt-get install docker-compose-v2
@@ -11,36 +15,23 @@ sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker ubuntu
 
-cd /home/ubuntu
+mkdir /home/ubuntu/docker
 
-git clone https://github.com/ghostfolio/ghostfolio ./app
+# INSTALL AWS
 
-mv ./app/docker/docker-compose.yml ./docker/docker-compose.yml
+sudo apt update && sudo apt install -y unzip curl
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 
-touch .env
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 805770710316.dkr.ecr.us-east-1.amazonaws.com
 
-cat <<EOF >.env
-COMPOSE_PROJECT_NAME=yuratab_ghostfolio
+# INSTALL CERTBOT
 
-# CACHE
-REDIS_HOST=redis
-REDIS_PORT=6379
-REDIS_PASSWORD=admin
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/local/bin/certbot
 
-# POSTGRES
-POSTGRES_DB=ghostfolio-db
-POSTGRES_USER=user
-POSTGRES_PASSWORD=admin
-
-# VARIOUS
-ACCESS_TOKEN_SALT=12345678
-DATABASE_URL=postgresql://user:admin@postgres:5432/ghostfolio-db?connect_timeout=300
-JWT_SECRET_KEY=aRDTM3j5x1gauV4z1PAqsfX5+C7L5ZDWYUkMzwwtOho=
-EOF
-
-cd ./docker
-
-docker compose up -d
+# INSTALL AND SETUP NGINX
 
 mkdir -p /etc/nginx
 touch /etc/nginx/nginx.conf
@@ -70,12 +61,14 @@ sudo apt install nginx -y
 sudo ufw allow 'Nginx HTTP'
 sudo ufw allow 'Nginx HTTPS'
 
-sudo service nginx restart
-sudo nginx -s reload -t
-sudo nginx -s reload
+# After that initial setup, we need to login via ssh, create compose file and run containers
+#
+#After that, certbot needs to be configured
 
-#After that, certbot needs to be configured via ssh
-
-#sudo snap install --classic certbot
-#sudo ln -s /snap/bin/certbot /usr/local/bin/certbot
 #sudo certbot --nginx
+
+# And run the nginx
+
+# sudo service nginx restart
+# sudo nginx -s reload -t
+# sudo nginx -s reload
