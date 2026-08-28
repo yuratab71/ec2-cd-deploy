@@ -11,9 +11,11 @@ sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker ubuntu
 
+cd /home/ubuntu
+
 git clone https://github.com/ghostfolio/ghostfolio ./app
 
-cd ./app
+mv ./app/docker/docker-compose.yml ./docker/docker-compose.yml
 
 touch .env
 
