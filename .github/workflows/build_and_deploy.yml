@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Call Test Workflow
-        uses: ./.github/workflows/test.yml
+        uses: .github/workflows/test.yml
   Build:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
