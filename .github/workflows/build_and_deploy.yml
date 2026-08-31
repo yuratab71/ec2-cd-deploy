@@ -17,21 +17,21 @@ jobs:
         run: |
           docker build --progress=plain -t ghostfolio .
       - name: Push Latest
-        id: ecr
+        id: push_latest
         uses: jwalton/gh-ecr-push@v2
         with:
           access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: us-east-1
+          region: ${{ secrets.AWS_REGION }}
           local-image: ghostfolio
           image: ghostfolio:latest
       - name: Push Tag
-        id: ecr
+        id: push_tag
         uses: jwalton/gh-ecr-push@v2
         with:
           access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: us-east-1
+          region: ${{ secrets.AWS_REGION }}
           local-image: ghostfolio
           image: ghostfolio:${{ github.ref_name }}
   Deploy:
