@@ -9,7 +9,11 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 jobs:
   Test:
-    uses: yuratab71/ec2-cd-deploy/.github/workflows/test.yml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Call Test Workflow
+        uses: ./.github/workflows/test.yml
   Build:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
