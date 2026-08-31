@@ -1,9 +1,8 @@
 name: Test Application
 on:
+  workflow_call:
   push:
     branches:
-      - '**'
-    tags:
       - '**'
   pull_request:
     branches:
