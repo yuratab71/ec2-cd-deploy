@@ -44,4 +44,11 @@ module "ec2" {
   subnet_id                = aws_subnet.public.id
   should_create_elastic_ip = true
   vpc_id                   = aws_vpc.default.id
+  profile                  = aws_iam_instance_profile.ec2_profile.name
+
+  initial_files = {
+    "docker/docker-compose.yml" = "/home/ubuntu/docker/docker-compose.yml"
+    ".env"                      = "/home/ubuntu/.env"
+    "postinstall.bash"          = "/home/ubuntu/postinstall.bash"
+  }
 }

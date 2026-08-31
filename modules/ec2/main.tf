@@ -16,7 +16,6 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 }
-
 resource "aws_key_pair" "deployer" {
   key_name   = "terraform-key"
   public_key = file(var.ssh_public_key_path)
@@ -67,11 +66,32 @@ resource "aws_instance" "ec2" {
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.ec2.id]
 
+  iam_instance_profile = var.profile
+
   tags = {
     Name = "Ubuntu EC2 instance"
   }
 
   user_data = file("${var.user_data_file_path}")
+}
+
+resource "null_resource" "files" {
+  for_each = var.initial_files
+
+  depends_on = [aws_instance.ec2]
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file(var.ssh_private_key_path)
+    host        = aws_instance.ec2.public_ip
+  }
+
+  provisioner "file" {
+    source      = each.key
+    destination = each.value
+  }
+
 }
 
 resource "aws_eip" "ip" {

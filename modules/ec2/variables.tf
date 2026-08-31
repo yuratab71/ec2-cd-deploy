@@ -40,3 +40,13 @@ variable "subnet_id" {
 variable "vpc_id" {
   type = string
 }
+
+variable "profile" {
+  type    = string
+  default = null
+}
+
+variable "initial_files" {
+  type    = map(string)
+  default = {}
+}

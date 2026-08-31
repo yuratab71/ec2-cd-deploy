@@ -1,7 +1,7 @@
 name: ghostfolio
 services:
   ghostfolio:
-    image: docker.io/ghostfolio/ghostfolio:latest
+    image: 805770710316.dkr.ecr.us-east-1.amazonaws.com/ghostfolio:latest
     container_name: ghostfolio
     init: true
     cap_drop:
