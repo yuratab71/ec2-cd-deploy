@@ -15,7 +15,8 @@ sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker ubuntu
 
-mkdir /home/ubuntu/docker
+sudo mkdir -p /home/ubuntu/docker
+sudo chown -R ubuntu:ubuntu /home/ubuntu/docker
 
 # INSTALL AWS
 
@@ -61,14 +62,6 @@ sudo apt install nginx -y
 sudo ufw allow 'Nginx HTTP'
 sudo ufw allow 'Nginx HTTPS'
 
-# After that initial setup, we need to login via ssh, create compose file and run containers
-#
-#After that, certbot needs to be configured
+# INSTALL INOTIFY TOOLS
 
-#sudo certbot --nginx
-
-# And run the nginx
-
-# sudo service nginx restart
-# sudo nginx -s reload -t
-# sudo nginx -s reload
+sudo apt install inotify-tools

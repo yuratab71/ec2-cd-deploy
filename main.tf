@@ -49,5 +49,6 @@ module "ec2" {
   initial_files = {
     "docker/docker-compose.yml" = "/home/ubuntu/docker/docker-compose.yml"
     ".env"                      = "/home/ubuntu/.env"
+    "postinstall.bash"          = "/home/ubuntu/postinstall.bash"
   }
 }

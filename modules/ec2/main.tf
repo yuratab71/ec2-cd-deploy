@@ -16,7 +16,6 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 }
-
 resource "aws_key_pair" "deployer" {
   key_name   = "terraform-key"
   public_key = file(var.ssh_public_key_path)
@@ -84,7 +83,7 @@ resource "null_resource" "files" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("~/.ssh/terraform-key")
+    private_key = file(var.ssh_private_key_path)
     host        = aws_instance.ec2.public_ip
   }
 
