@@ -8,6 +8,7 @@ terraform {
 
   required_version = ">= 1.15.8"
 }
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -35,15 +36,18 @@ variable "ssh_public_key_path" {
 module "ec2" {
   source = "./modules/ec2"
 
-  ec2_type                 = "t2.micro"
-  ssh_allowed_ips          = var.ssh_allowed_ips
-  ssh_public_key_path      = var.ssh_public_key_path
-  ssh_private_key_path     = var.ssh_private_key_path
-  user_data_file_path      = "${path.cwd}/bootstrap.bash"
-  gateway                  = aws_internet_gateway.default
-  subnet_id                = aws_subnet.public.id
+  ec2_type             = "t2.micro"
+  ssh_allowed_ips      = var.ssh_allowed_ips
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
+  user_data_file_path  = "${path.cwd}/bootstrap.bash"
+  gateway = {
+    id  = module.vpc.igw_id
+    arn = module.vpc.igw_arn
+  }
+  subnet_id                = module.vpc.public_subnets[0]
   should_create_elastic_ip = true
-  vpc_id                   = aws_vpc.default.id
+  vpc_id                   = module.vpc.vpc_id
   profile                  = aws_iam_instance_profile.ec2_profile.name
 
   initial_files = {
