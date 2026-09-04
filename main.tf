@@ -54,5 +54,11 @@ module "ec2" {
     "docker/docker-compose.yml" = "/home/ubuntu/docker/docker-compose.yml"
     ".env"                      = "/home/ubuntu/.env"
     "postinstall.bash"          = "/home/ubuntu/postinstall.bash"
+    "archive-backup.bash"       = "/home/ubuntu/archive-backup.bash"
+    "setup-cron-archiver.bash"  = "/home/ubuntu/setup-cron-archiver.bash"
   }
+}
+
+module "storage" {
+  source = "./modules/storage"
 }
