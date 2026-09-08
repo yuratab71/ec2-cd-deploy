@@ -84,7 +84,7 @@ resource "null_resource" "files" {
     type        = "ssh"
     user        = "ubuntu"
     private_key = file(var.ssh_private_key_path)
-    host        = aws_instance.ec2.public_ip
+    host        = var.should_create_elastic_ip ? aws_instance.ec2.public_ip : var.elastic_ip
   }
 
   provisioner "file" {
@@ -113,5 +113,9 @@ resource "aws_eip_association" "ip" {
 
 output "elastic_ip" {
   value = var.should_create_elastic_ip ? aws_eip.ip[0].public_ip : null
+}
+
+output "id" {
+  value = aws_instance.ec2.id
 }
 

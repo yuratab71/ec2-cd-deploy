@@ -1,5 +1,6 @@
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "6.7.2"
 
   region = "us-east-1"
 
@@ -27,10 +28,26 @@ resource "aws_route53_record" "primary" {
   name    = var.domain
   type    = "A"
   ttl     = 60
-  records = [module.ec2.elastic_ip]
+  records = [aws_eip.ip.public_ip]
 }
 
 output "nameservers" {
   description = "Domain name nameservers"
   value       = aws_route53_zone.default.name_servers
+}
+
+resource "aws_eip" "ip" {
+  domain = "vpc"
+
+  depends_on = [module.vpc]
+}
+
+resource "aws_eip_association" "ip" {
+  instance_id   = module.ec2.id
+  allocation_id = aws_eip.ip.id
+}
+
+output "elastic_ip" {
+  value       = aws_eip.ip.public_ip
+  description = "EC2 instance ip address"
 }

@@ -40,19 +40,21 @@ module "ec2" {
   ssh_allowed_ips      = var.ssh_allowed_ips
   ssh_public_key_path  = var.ssh_public_key_path
   ssh_private_key_path = var.ssh_private_key_path
-  user_data_file_path  = "${path.cwd}/bootstrap.bash"
+  user_data_file_path  = "${path.cwd}/user_data.bash"
   gateway = {
     id  = module.vpc.igw_id
     arn = module.vpc.igw_arn
   }
   subnet_id                = module.vpc.public_subnets[0]
-  should_create_elastic_ip = true
+  should_create_elastic_ip = false
+  elastic_ip               = aws_eip.ip.public_ip
   vpc_id                   = module.vpc.vpc_id
   profile                  = aws_iam_instance_profile.ec2_profile.name
 
   initial_files = {
     "docker/docker-compose.yml" = "/home/ubuntu/docker/docker-compose.yml"
     ".env"                      = "/home/ubuntu/.env"
+    "user_data.bash"            = "/home/ubuntu/user_data.bash"
     "postinstall.bash"          = "/home/ubuntu/postinstall.bash"
     "archive-backup.bash"       = "/home/ubuntu/archive-backup.bash"
     "setup-cron-archiver.bash"  = "/home/ubuntu/setup-cron-archiver.bash"
