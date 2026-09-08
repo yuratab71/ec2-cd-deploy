@@ -9,6 +9,11 @@ variable "should_create_elastic_ip" {
   default = false
 }
 
+variable "elastic_ip" {
+  type    = string
+  default = null
+}
+
 variable "ssh_allowed_ips" {
   type    = list(string)
   default = ["0.0.0.0/0"]
