@@ -15,7 +15,7 @@ sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker ubuntu
 
-sudo mkdir -p /home/ubuntu/docker
+sudo mkdir /home/ubuntu/docker
 sudo chown -R ubuntu:ubuntu /home/ubuntu/docker
 
 # INSTALL AWS
