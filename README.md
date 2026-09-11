@@ -11,19 +11,10 @@
 - Get the nameservers from terraform output and add the to the Domain provider custom NS configuration
 - Get the IP of running instance
 - SSH to ec2
-- Run following script to allow execute the scripts
+- Run following script to allow execute the scripts and run them
 
 ```bash
-chmod 755 bootstrap.bash
-chmod 755 postinstall.bash
-chmod 755 setup-cron-archiver.bash
-chmod 755 setup-backup-archiver.bash
-```
+chmod 755 postinstall.bash setup-chron-archiver.bash archive-backup.bash
 
-- And execute the scripts itself
-
-```bash
-sudo ./bootstrap.bash
-sudo ./postinstall.bash.bash
-sudo ./setup-cron-archiver.bash.bash
+sudo ./postinstall.bash && sudo ./setup-cron-archiver.bash
 ```
