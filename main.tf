@@ -61,6 +61,36 @@ module "ec2" {
   }
 }
 
+resource "aws_iam_role_policy" "cloudwatch" {
+  name = "cloudwatch"
+  role = aws_iam_role.ecr_access.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [{
+      Effect = "Allow"
+
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:DescribeLogStreams",
+        "logs:PutLogEvents"
+      ]
+
+      Resource = "*"
+    }]
+  })
+}
+
 module "storage" {
   source = "./modules/storage"
+}
+
+module "redis" {
+  source = "./modules/redis"
+
+  vpc_id             = module.vpc.vpc_id
+  allowed_ips        = ["10.0.1.0/24"]
+  private_subnet_ids = module.vpc.private_subnets
 }
