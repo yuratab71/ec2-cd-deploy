@@ -12,7 +12,8 @@ module "vpc" {
 
   enable_network_address_usage_metrics = false
 
-  public_subnets = ["10.0.1.0/24"]
+  public_subnets  = ["10.0.1.0/24"]
+  private_subnets = ["10.0.2.0/24"]
 
   map_public_ip_on_launch = true
 
@@ -51,3 +52,4 @@ output "elastic_ip" {
   value       = aws_eip.ip.public_ip
   description = "EC2 instance ip address"
 }
+
