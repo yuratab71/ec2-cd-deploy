@@ -52,12 +52,12 @@ module "ec2" {
   profile                  = aws_iam_instance_profile.ec2_profile.name
 
   initial_files = {
-    "docker/docker-compose.yml" = "/home/ubuntu/docker/docker-compose.yml"
-    ".env"                      = "/home/ubuntu/.env"
-    "user_data.bash"            = "/home/ubuntu/user_data.bash"
-    "postinstall.bash"          = "/home/ubuntu/postinstall.bash"
-    "archive-backup.bash"       = "/home/ubuntu/archive-backup.bash"
-    "setup-cron-archiver.bash"  = "/home/ubuntu/setup-cron-archiver.bash"
+    "docker-compose.yml"       = "/home/ubuntu/docker-compose.yml"
+    ".env"                     = "/home/ubuntu/.env"
+    "user_data.bash"           = "/home/ubuntu/user_data.bash"
+    "postinstall.bash"         = "/home/ubuntu/postinstall.bash"
+    "archive-backup.bash"      = "/home/ubuntu/archive-backup.bash"
+    "setup-cron-archiver.bash" = "/home/ubuntu/setup-cron-archiver.bash"
   }
 }
 

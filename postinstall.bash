@@ -3,15 +3,20 @@
 # EXAMPLE POSTINSTALL SCRIPT, JUST RUN AFTER CREATING THE INSTANCE
 
 set -e
+set -x
 
-sudo apt install inotify-tools
+sudo ufw allow 'Nginx HTTP'
+sudo ufw allow 'Nginx HTTPS'
+
+cd /home/ubuntu
 
 # RUN DOCKER
 
+echo "Trying to login to aws docker registrty..."
+
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 805770710316.dkr.ecr.us-east-1.amazonaws.com
 
-cd ~/docker
-docker compose --env-file ../.env up -d
+docker compose up -d
 
 # CONFIGURE CERTBOT
 
@@ -22,9 +27,10 @@ WATCHER_PATH="/usr/local/bin/docker-watcher.sh"
 sudo tee $WATCHER_PATH <<EOF
 #!/bin/bash
 
-WATCH_DIR="/home/ubuntu/docker"
+WATCH_DIR="/home/ubuntu"
 LOG="/var/log/docker-watcher.log"
 TARGET="docker-compose.yml"
+ENV="/home/ubuntu/.env"
 
 echo "Watching \$WATCH_DIR..." >>"\$LOG"
 
@@ -37,7 +43,7 @@ inotifywait -m -r -e close_write \
     echo "\$DATETIME: Change detected - \$DIRECTORY$FILE (\$EVENT)" >>"\$LOG"
     cd \$WATCH_DIR
     docker compose pull
-    docker compose --env-file ../.env up -d --build
+    docker compose --env-file \$ENV up -d --build
   fi
 done
 EOF
