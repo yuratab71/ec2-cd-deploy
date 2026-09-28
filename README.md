@@ -14,7 +14,6 @@
 - Run following script to allow execute the scripts and run them
 
 ```bash
-chmod 755 postinstall.bash setup-chron-archiver.bash archive-backup.bash
-
-sudo ./postinstall.bash && sudo ./setup-cron-archiver.bash
+chmod 755 postinstall.bash
+sudo ./postinstall.bash
 ```
