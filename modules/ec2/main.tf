@@ -118,4 +118,3 @@ output "elastic_ip" {
 output "id" {
   value = aws_instance.ec2.id
 }
-

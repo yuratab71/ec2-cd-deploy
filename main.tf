@@ -18,6 +18,11 @@ variable "domain" {
   default = "yuratab.pp.ua"
 }
 
+variable "jump_domain" {
+  type    = string
+  default = "yuratab-db.pp.ua"
+}
+
 variable "ssh_allowed_ips" {
   type    = list(string)
   default = ["0.0.0.0/0"]
@@ -52,15 +57,64 @@ module "ec2" {
   profile                  = aws_iam_instance_profile.ec2_profile.name
 
   initial_files = {
-    "docker-compose.yml"       = "/home/ubuntu/docker-compose.yml"
-    ".env"                     = "/home/ubuntu/.env"
-    "user_data.bash"           = "/home/ubuntu/user_data.bash"
-    "postinstall.bash"         = "/home/ubuntu/postinstall.bash"
-    "archive-backup.bash"      = "/home/ubuntu/archive-backup.bash"
-    "setup-cron-archiver.bash" = "/home/ubuntu/setup-cron-archiver.bash"
+    "docker-compose.yml" = "/home/ubuntu/docker-compose.yml"
+    ".env"               = "/home/ubuntu/.env"
+    "user_data.bash"     = "/home/ubuntu/user_data.bash"
+    "postinstall.bash"   = "/home/ubuntu/postinstall.bash"
   }
 }
 
-module "storage" {
-  source = "./modules/storage"
+module "bastion" {
+  source = "./modules/bastion"
+
+  ec2_type             = "t2.micro"
+  ssh_allowed_ips      = var.ssh_allowed_ips
+  ssh_public_key_path  = var.ssh_public_key_path
+  ssh_private_key_path = var.ssh_private_key_path
+  gateway = {
+    id  = module.vpc.igw_id
+    arn = module.vpc.igw_arn
+  }
+  subnet_id = module.vpc.public_subnets[0]
+  vpc_id    = module.vpc.vpc_id
+  profile   = aws_iam_instance_profile.ec2_profile.name
+}
+
+resource "aws_iam_role_policy" "cloudwatch" {
+  name = "cloudwatch"
+  role = aws_iam_role.ecr_access.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [{
+      Effect = "Allow"
+
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:DescribeLogStreams",
+        "logs:PutLogEvents"
+      ]
+
+      Resource = "*"
+    }]
+  })
+}
+
+module "redis" {
+  source = "./modules/redis"
+
+  vpc_id             = module.vpc.vpc_id
+  allowed_ips        = ["10.0.1.0/24"]
+  private_subnet_ids = module.vpc.private_subnets
+}
+
+module "db" {
+  source             = "./modules/database"
+  vpc_id             = module.vpc.vpc_id
+  allowed_ips        = ["10.0.1.0/24"]
+  private_subnet_ids = module.vpc.database_subnets
+  db_user_name       = "ghostfolio"
+  db_password        = "ghostfolio"
 }
