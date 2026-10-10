@@ -73,8 +73,3 @@ resource "aws_instance" "jump_server" {
     Name = "Ubuntu EC2 instance"
   }
 }
-
-output "id" {
-  description = "Bastion host id"
-  value       = aws_instance.jump_server.id
-}

@@ -12,8 +12,8 @@ module "vpc" {
 
   enable_network_address_usage_metrics = false
 
-  public_subnets  = ["10.0.1.0/24"]
-  private_subnets = ["10.0.2.0/24"]
+  public_subnets  = ["10.0.1.0/24", "10.0.5.0/24"]
+  private_subnets = ["10.0.2.0/24", "10.0.6.0/24"]
 
   map_public_ip_on_launch = true
 
@@ -22,8 +22,6 @@ module "vpc" {
 
   create_private_nat_gateway_route = false
 }
-
-
 
 # MAIN EC2 DNS EIP CONFIG
 resource "aws_route53_zone" "default" {
@@ -45,8 +43,12 @@ resource "aws_route53_record" "primary" {
   zone_id = aws_route53_zone.default.zone_id
   name    = var.domain
   type    = "A"
-  ttl     = 60
-  records = [aws_eip.ip.public_ip]
+
+  alias {
+    name                   = module.ASG.lb_dns_name
+    zone_id                = module.ASG.lb_zone_id
+    evaluate_target_health = true
+  }
 }
 
 output "nameservers" {
