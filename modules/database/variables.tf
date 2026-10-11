@@ -6,11 +6,6 @@ variable "vpc_id" {
   type = string
 }
 
-variable "allowed_ips" {
-  type    = list(string)
-  default = ["0.0.0.0/0"]
-}
-
 variable "db_user_name" {
   type    = string
   default = "admin"
@@ -19,4 +14,8 @@ variable "db_user_name" {
 variable "db_password" {
   type    = string
   default = "admin"
+}
+
+variable "security_groups" {
+  type = list(string)
 }

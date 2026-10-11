@@ -38,6 +38,11 @@ variable "ssh_public_key_path" {
   default = "~/.ssh/terraform-key.pub"
 }
 
+variable "discord_webhook_url" {
+  type      = string
+  sensitive = true
+}
+
 module "ec2" {
   source = "./modules/ec2"
 
@@ -67,10 +72,9 @@ module "ec2" {
 module "bastion" {
   source = "./modules/bastion"
 
-  ec2_type             = "t2.micro"
-  ssh_allowed_ips      = var.ssh_allowed_ips
-  ssh_public_key_path  = var.ssh_public_key_path
-  ssh_private_key_path = var.ssh_private_key_path
+  ec2_type            = "t2.micro"
+  ssh_allowed_ips     = var.ssh_allowed_ips
+  ssh_public_key_path = var.ssh_public_key_path
   gateway = {
     id  = module.vpc.igw_id
     arn = module.vpc.igw_arn
@@ -103,18 +107,43 @@ resource "aws_iam_role_policy" "cloudwatch" {
 }
 
 module "redis" {
-  source = "./modules/redis"
-
+  source             = "./modules/redis"
   vpc_id             = module.vpc.vpc_id
-  allowed_ips        = ["10.0.1.0/24"]
   private_subnet_ids = module.vpc.private_subnets
+  security_groups    = [module.bastion.security_group_id, module.ec2.security_group_id, module.ASG.security_group_id]
 }
 
 module "db" {
   source             = "./modules/database"
   vpc_id             = module.vpc.vpc_id
-  allowed_ips        = ["10.0.1.0/24"]
   private_subnet_ids = module.vpc.database_subnets
   db_user_name       = "ghostfolio"
   db_password        = "ghostfolio"
+  security_groups    = [module.bastion.security_group_id, module.ec2.security_group_id, module.ASG.security_group_id]
+}
+
+module "lambda" {
+  source = "./modules/lambda"
+
+  function = {
+    name         = "AGS_CPU_NOTIFICATION"
+    source_path  = "cpu-usage-notification.js"
+    archive_path = ".cpu-usage-notification.zip"
+  }
+
+  env = {
+    DISCORD_WEBHOOK_URL = var.discord_webhook_url
+  }
+}
+
+module "ASG" {
+  source              = "./modules/scaling_group"
+  ec2_id              = module.ec2.id
+  vpc_public_subnets  = module.vpc.public_subnets
+  vpc_private_subnets = module.vpc.private_subnets
+  vpc_id              = module.vpc.vpc_id
+  domain_name         = var.domain
+  hosted_zone_id      = aws_route53_zone.default.id
+  function_name       = module.lambda.lambda_name
+  function_arn        = module.lambda.lambda_arn
 }

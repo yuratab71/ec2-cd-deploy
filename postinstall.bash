@@ -22,6 +22,8 @@ docker compose up -d
 
 sudo certbot --nginx
 
+# sudo cerbot --nginx rollback
+
 WATCHER_PATH="/usr/local/bin/docker-watcher.sh"
 
 sudo tee $WATCHER_PATH <<EOF
